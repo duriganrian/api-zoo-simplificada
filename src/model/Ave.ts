@@ -112,7 +112,7 @@ export class Ave extends Animal {
                     if (!await Habitat.inserirAnimalHabitat(idAnimal, idHabitat)) {
                         console.log("Erro ao cadastrar animal no habitat");
                     };
-                    
+
                     // Se o número de linhas for diferente de zero, a operação deu certo e o valor VERDADEIRO é atribuido na variável
                     insertResult = true;
                 });
@@ -126,4 +126,38 @@ export class Ave extends Animal {
             return insertResult;
         }
     }
+   
+    /**
+     * remove um animal do banc de dados     
+     * @param idAnimal 
+     * @returns 
+     */
+    static async removerAve(idAnimal: number): Promise<Boolean> {
+        let queryResult = false;
+
+        try {
+            const queryDeleteAnimnalHabitat = `DELETE FROM animal_habitat WHERE idanimal=${idAnimal}`;
+
+            await database.query(queryDeleteAnimnalHabitat)
+                .then(async(result) => {
+                    if (result.rowCount != 0) {
+                        const queryDeleteAnimnalHabitat = `DELETE FROM animal WHERE idanimal=${idAnimal}`
+                        await database.query(queryDeleteAnimnalHabitat)
+                        .then((result) => {
+                                if(result.rowCount != 0) {
+                                    queryResult = true;
+                                }
+                        })
+                        
+                    }
+                })
+
+                return queryResult;
+
+        } catch (error) {
+            console.log(`Erro na consulta: ${error}`);
+            return queryResult;
+        }
+    }
+
 }
