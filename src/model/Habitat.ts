@@ -211,36 +211,70 @@ export class Habitat {
     * @param idAnimal 
     * @returns 
     */
-    static async removerHabitat(idHabitat: number): Promise<Boolean> {
+    static async removerHabitat(idHabitat: number): Promise<boolean> {
         let queryResult = false;
 
         try {
+            // Exclui os registros relacionados na tabela animal_habitat
             const queryDeleteAnimalHabitat = `DELETE FROM animal_habitat WHERE idhabitat=${idHabitat}`;
-
             await database.query(queryDeleteAnimalHabitat)
                 .then(async (result) => {
-                    if (result.rowCount != 0) {
-                        const queryDeleteHabitatAtracao = `DELETE FROM atracao WHERE idhabitat=${idHabitat}`;
+                    if (result.rowCount !== 0) {
+                        console.log(`${result.rowCount} registros de animal_habitat excluídos para o idHabitat ${idHabitat}`);
 
-                        await database.query(queryDeleteHabitatAtracao)
+                        // Exclui os registros relacionados na tabela atracao
+                        const queryDeleteAtracao = `DELETE FROM atracao WHERE idhabitat=${idHabitat}`;
+                        await database.query(queryDeleteAtracao)
                             .then(async (result) => {
-                                if (result.rowCount != 0) {
+                                if (result.rowCount !== 0) {
+                                    console.log(`${result.rowCount} registros de atracao excluídos para o idHabitat ${idHabitat}`);
+
+                                    // Exclui o registro na tabela habitat
                                     const queryDeleteHabitat = `DELETE FROM habitat WHERE idhabitat=${idHabitat}`;
                                     await database.query(queryDeleteHabitat)
                                         .then((result) => {
-                                            if (result.rowCount != 0) {
+                                            if (result.rowCount !== 0) {
+                                                console.log(`${result.rowCount} registro de habitat excluído para o idHabitat ${idHabitat}`);
                                                 queryResult = true;
+                                            } else {
+                                                console.log(`Nenhum registro de habitat encontrado para o idHabitat ${idHabitat}`);
                                             }
-                                        })
+                                        });
+                                } else {
+                                    console.log(`Nenhum registro de atracao encontrado para o idHabitat ${idHabitat}`);
                                 }
-                            })
+                            });
+                    } else {
+                        console.log(`Nenhum registro de animal_habitat encontrado para o idHabitat ${idHabitat}`);
                     }
-                })
+                });
 
             return queryResult;
+
+        } catch (error) {
+            console.log(`Erro ao executar consulta: ${error}`);
+            return queryResult;
+        }
+    }
+
+    static async atualizarHabitat(habitat: Habitat, idHabitat: number): Promise<Boolean> {
+        let queryResult = false
+
+        try {
+            const queryUpdateHabitat = `UPDATE animal SET`;
+            await database.query(queryUpdateHabitat)
+                .then((result) => {
+                    if (result.rowCount !== 0) {
+                        queryResult = true
+                    }
+                })
+            return queryResult
+
         } catch (error) {
             console.log(`Erro na consulta: ${error}`);
             return queryResult;
         }
     }
 }
+
+

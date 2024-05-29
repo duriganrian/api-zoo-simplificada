@@ -169,12 +169,31 @@ export class Atracao {
             const queryDeleteAtracao = `DELETE FROM atracao WHERE idatracao=${idAtracao} `;
 
             await database.query(queryDeleteAtracao)
-            .then((result) => {
-                if (result.rowCount != 0) {
-                    queryResult = true;
-                }
-            })
+                .then((result) => {
+                    if (result.rowCount != 0) {
+                        queryResult = true;
+                    }
+                })
 
+            return queryResult;
+        } catch (error) {
+            console.log(`Erro na consulta: ${error}`);
+            return queryResult;
+        }
+    }
+    static async atualizarAtracao(atracao: Atracao, idAtracao: number): Promise<Boolean> {
+        let queryResult = false;
+
+        try {
+            const queryUpdateAtracao = `UPDATE atracao SET
+                                        nomeAtracao=${atracao.getNomeAtracao().toUpperCase()}
+                                    WHERE idAtracao=${idAtracao}`;
+            await database.query(queryUpdateAtracao)
+                .then((result) => {
+                    if (result.rowCount !== 0) {
+                        queryResult = true;
+                    }
+                })
             return queryResult;
         } catch (error) {
             console.log(`Erro na consulta: ${error}`);

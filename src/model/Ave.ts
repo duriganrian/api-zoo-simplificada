@@ -1,3 +1,4 @@
+import { query } from "express";
 import { Animal } from "./Animal";
 import { DatabaseModel } from "./DatabaseModel";
 import { Habitat } from "./Habitat";
@@ -126,7 +127,7 @@ export class Ave extends Animal {
             return insertResult;
         }
     }
-   
+
     /**
      * remove um animal do banc de dados     
      * @param idAnimal 
@@ -139,24 +140,44 @@ export class Ave extends Animal {
             const queryDeleteAnimnalHabitat = `DELETE FROM animal_habitat WHERE idanimal=${idAnimal}`;
 
             await database.query(queryDeleteAnimnalHabitat)
-                .then(async(result) => {
+
+            const queryDeleteAnimnal = `DELETE FROM animal WHERE idanimal=${idAnimal}`
+            await database.query(queryDeleteAnimnal)
+                .then((result) => {
                     if (result.rowCount != 0) {
-                        const queryDeleteAnimnalHabitat = `DELETE FROM animal WHERE idanimal=${idAnimal}`
-                        await database.query(queryDeleteAnimnalHabitat)
-                        .then((result) => {
-                                if(result.rowCount != 0) {
-                                    queryResult = true;
-                                }
-                        })
-                        
+                        queryResult = true;
                     }
                 })
 
-                return queryResult;
+            return queryResult;
 
         } catch (error) {
             console.log(`Erro na consulta: ${error}`);
             return queryResult;
+        }
+    }
+
+    static async atualizarAve(ave: Ave, idAve: number): Promise<boolean> {
+        let queryResult = false;
+        try {
+            const queryUpdateAve = `UPDATE animal SET
+            nomeAnimal='${ave.getNomeAnimal().toUpperCase()}',
+            idadeAnimal=${ave.getIdadeAnimal()},
+            generoAnimal='${ave.getGeneroAnimal().toUpperCase()}',
+            envergadura=${ave.getEnvergadura()}
+            WHERE idAnimal=${idAve}`;
+
+            await database.query(queryUpdateAve)
+                .then((result) => {
+                    if (result.rowCount !== 0) {
+                        queryResult = true;
+                    }
+                })
+
+            return queryResult;
+        } catch (error) {
+            console.log(`Erro na consulta: ${error}`);
+            return queryResult
         }
     }
 
