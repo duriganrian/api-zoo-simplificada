@@ -7,7 +7,7 @@ class AtracaoController {
      */
     public async todos(req: Request, res: Response): Promise<Response> {
         try {
-            const atracoes = JSON.stringify(await Atracao.listarAtracoes());
+            const atracoes = await Atracao.listarAtracoes();
             return res.status(200).json(atracoes);
         } catch (error) {
             console.log(`Erro ao acessar o modelo: ${error}`);

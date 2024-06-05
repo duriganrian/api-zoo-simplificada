@@ -7,7 +7,7 @@ class HabitatController {
      */
     public async todos(req: Request, res: Response): Promise<Response> {
         try {
-            const habitats = JSON.stringify(await Habitat.listarHabitats());
+            const habitats = await Habitat.listarHabitats();
             return res.status(200).json(habitats);
         } catch (error) {
             console.log(`Erro ao acessar o modelo: ${error}`);

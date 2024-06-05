@@ -7,7 +7,7 @@ class AveController extends Ave {
      */
     public async todos(req: Request, res: Response): Promise<Response> {
         try {
-            const aves = JSON.stringify(await Ave.listarAves());
+            const aves = await Ave.listarAves();
 
             return res.status(200).json(aves);
         } catch (error) {
